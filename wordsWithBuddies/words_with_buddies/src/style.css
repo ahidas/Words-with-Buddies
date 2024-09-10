@@ -1,0 +1,101 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.board{
+    display: flex;
+    justify-content: center;
+    max-height: 930px;
+    max-width: 930px;
+    width: auto;
+    flex-direction: column;
+    gap: 2px;
+    background-color: tan;
+    border-color: black;
+    border-style: ridge;
+    border-radius: 1%;
+    padding: 3px;
+}
+.boardAndInput{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: large;
+}
+.lettersInput{
+    border: 2px solid black;
+    border-radius: 10%;
+    
+}
+.head{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-size: large;
+}
+.body{
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.pot_words{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+.pot{
+
+}
+.row{
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+    flex: 1;
+    min-height: 0;
+}
+
+.box {
+    text-transform: capitalize;
+    display:flex;
+    color: white;
+    border-radius: 15%;
+    justify-content: center;
+    text-align: center;
+    flex: 1;
+    font-size: 200%;
+    font-weight: 900;
+    min-width: 0;
+    min-height: 0;
+}
+.tripleLetter{
+background-color: lightgreen;
+}
+
+.tripleWord{
+background-color: gold;
+}
+
+.doubleWord{
+background-color: maroon;
+}
+
+.doubleLetter{
+background-color: blue;
+
+}
+
+.letter {
+    background-color: rgb(252, 209, 157);
+}
+
+.blank{
+background-color: bisque;
+
+}
+
+.center{
+    background: radial-gradient(#387989, #6dd5ed);
+}
