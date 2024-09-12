@@ -48,6 +48,8 @@ int traverse_board(board_t* board, char** array, letter_set_t* set, pot_word_ll*
    letter_t* curr;
    for(int y = 0; y < size; y++){
       for(int x = 0; x < size; x++){
+        printf("%d\n", size * y + x + 1);
+        fflush(stdout);
          if(board->spaces[y][x]->filled){
            // printf("loop\n");
             if(!board->spaces[y][x]->checked_h){

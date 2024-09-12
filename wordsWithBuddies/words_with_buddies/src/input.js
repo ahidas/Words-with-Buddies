@@ -2,7 +2,8 @@ import './style.css';
 import { useEffect, useState } from "react";
 
 
-export function Input({ setWords, vals }){
+
+export function Input({ setWords, vals, setPercent }){
     const [hello,setHello] = useState(null);
     const [letters,setLetters] = useState("");
     
@@ -19,13 +20,16 @@ export function Input({ setWords, vals }){
     const message = await getHello();
     setHello(message);
   };
+
     async function handleSubmit(e){
       //disable page from reloading
       e.preventDefault();
   
     const data = [letters, vals];
+    setPercent(1);
       const result = await fetch("https://ahidas.pythonanywhere.com/api/letters",{method: 'POST', body: data});
       const js = await result.json();
+      setPercent(0);
       console.log(js);
       setWords(js);
     }
@@ -42,7 +46,7 @@ export function Input({ setWords, vals }){
       setLetters(e.target.value)
           }}}value={letters} type="text" placeholder='Enter your letters...'/> 
           
-          <button onClick={clickHandler}> Analyze...</button>
+          <button> Analyze...</button>
           </form> 
     </>)
   }

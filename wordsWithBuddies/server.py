@@ -1,7 +1,8 @@
 from flask import Flask, jsonify, request
 import subprocess
 from flask_cors import CORS
-
+from flask import stream_with_context
+import time
 #app instance
 app = Flask(__name__)
 CORS(app)
@@ -69,7 +70,7 @@ def return_home():
         'message': "Hello world!"
     })
 
-@app.route("/api/letters", methods=['POST', 'GET'])
+@app.route("/api/updates", methods=['POST', 'GET'])
 def handle_post():
     print(request.data)
     words =  {
@@ -80,17 +81,35 @@ def handle_post():
         "new_letters": ""
     }
     letters = parseIn(request.data)
-    print(letters)
-    p1 = subprocess.run(['./words','curr_board.txt', letters],capture_output=True,text=True)
-    print(p1.stdout)
-    print("here")
-    words = parseOut(p1.stdout)
+    #print(letters)
+    fout = open("out.txt","w",buffering=1)
+    fin = open("out.txt", "r")
+    p1 = subprocess.Popen(['./words','devin.txt', 'abc'], stdout=fout.fileno(),text=True)
 
-    return jsonify(words)
+    def generate():
+        index = 0
+        while(True):
+            output = fin.readline()
+            if output:
+                index+=1
+                yield(output.strip())
+                if(index == 225):
+                    print(fin.tell())
+                    break
+    return app.response_class(stream_with_context(generate()))
 
 
+@app.route("/api/words", methods=['POST', 'GET'])
+def handle_words():
+        fin = open("out.txt", "r")
+        fin.seek(792) #magic number, always where updates end
+        time.sleep(.5)
+        words_raw = fin.read()
+        print(words_raw)
+        words = parseOut(words_raw)
+        return jsonify(words)
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    app.run(debug=True, port=5006)
 
 
 
