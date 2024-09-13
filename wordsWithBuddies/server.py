@@ -84,7 +84,7 @@ def handle_post():
     #print(letters)
     fout = open("out.txt","w",buffering=1)
     fin = open("out.txt", "r")
-    p1 = subprocess.Popen(['./words','devin.txt', 'abc'], stdout=fout.fileno(),text=True)
+    p1 = subprocess.Popen(['./words','devin.txt', 'abcasefasef'], stdout=fout.fileno(),text=True)
 
     def generate():
         index = 0
@@ -92,7 +92,7 @@ def handle_post():
             output = fin.readline()
             if output:
                 index+=1
-                yield(output.strip())
+                yield(output.strip() + "-")
                 if(index == 225):
                     print(fin.tell())
                     break

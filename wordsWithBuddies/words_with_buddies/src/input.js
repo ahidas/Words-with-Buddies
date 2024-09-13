@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 
 
-export function Input({ setWords, vals, setPercent }){
+export function Input({ setWords, vals, setPercent, percent }){
     const [hello,setHello] = useState(null);
     const [letters,setLetters] = useState("");
     
@@ -26,12 +26,33 @@ export function Input({ setWords, vals, setPercent }){
       e.preventDefault();
   
     const data = [letters, vals];
-    setPercent(1);
-      const result = await fetch("https://ahidas.pythonanywhere.com/api/letters",{method: 'POST', body: data});
-      const js = await result.json();
-      setPercent(0);
-      console.log(js);
-      setWords(js);
+    //getting updates
+    fetch("http://127.0.0.1:5006/api/updates").then((res) => {
+      const reader = res.body.getReader();
+
+      const read = () => {
+        reader.read().then(async ({done, value}) => {
+          if (done) {
+            console.log("end");
+            const result = await fetch("http://127.0.0.1:5006/api/words",{method: 'POST', body: data});
+            const js = await result.json();
+            console.log(js);
+            setWords(js);
+            setPercent(0);
+            return;
+          }
+
+          const decoder = new TextDecoder();
+
+          
+          const split_value = decoder.decode(value).split("-");
+          console.log(Number(split_value[split_value.length - 2])/2.25);
+          setPercent(Number(split_value[split_value.length - 2])/225);
+          read();
+        });
+      };
+      read();
+    })
     }
 
 

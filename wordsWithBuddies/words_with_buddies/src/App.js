@@ -26,7 +26,7 @@ const emptyBoard = [
 function App() {
   const [words, setWords] = useState(null);
   const [vals, setVals] = useState(emptyBoard);
-  const [percent, setPercent] = useState(0);
+  const [percent, setPercent] = useState(0.0);
 
   return (
    <div className='site'> 
@@ -36,9 +36,9 @@ function App() {
       <div className='boardAndInput'>
       <text> Enter your current GameBoard in the grid - then your letters - then click analyze!</text>
     <GameBoard vals={vals} setVals={setVals}/>
-    <Input setWords ={setWords} vals={vals} setPercent = {setPercent}/> 
+    <Input setWords ={setWords} vals={vals} setPercent = {setPercent} percent = {percent}/> 
     </div>
-    <Best_Words words={words} setVals={setVals} vals={vals} percent={percent}/>
+    <BestWords words={words} setVals={setVals} vals={vals} percent={percent}/>
 
    </div>
   </div>
@@ -52,7 +52,7 @@ function Header(){
       </header>
    </>)
 }
-function Top_Word({word, setVals, vals}){
+function TopWord({word, setVals, vals}){
   if (word.length < 3){
     return null; 
   }
@@ -75,27 +75,28 @@ function Top_Word({word, setVals, vals}){
   return <> <button className='pot' onClick={() => {handleClick(word)}}> {word.word.toUpperCase()} for {word.points} at position ({word.position[0]},{word.position[1]}) in the {word.direction} direction using {word.new_letters} new letters</button> <br/> </>
 }
 
-function loading({percent}){
+function Loading({percent}){
 
   return(
       <>
+      <text> Finding words at square {Math.floor(percent * 225)}... </text>
       <div className="bar">
-          <div className="filler" style={{width: `${percent}%`}}/>
+          <div className="filler" style={{width: `${percent * 100}%`}}/>
       </div>
       </>
   )
 }
 
-function Best_Words({ words, setVals, vals, percent }){
+function BestWords({ words, setVals, vals, percent }){
 
   return <>
     <div>
-      {percent ? <loading percent={percent}/> : null} 
-         {words ? `"Total:" ${words.total}` : null} <br/>
+      {percent ? <Loading percent={percent}/> : null} 
+         {words ? `Total: ${words.total}` : null} <br/>
          {words ? `Longest Word: ${words.words[0].word} for ${words.words[0].points} at position (${words.words[0].position[0]},${words.words[0].position[1]}) in the ${words.words[0].direction} direction using ${words.words[0].new_letters} new letters` : null}
         <br/>
         <div className='pot_words'>
-        {words ? words.words.slice(1).map((w) => (<Top_Word word={w} setVals={setVals} vals={vals}/>)) : null}
+        {words ? words.words.slice(1).map((w) => (<TopWord word={w} setVals={setVals} vals={vals}/>)) : null}
         </div>
     </div>
   </>
