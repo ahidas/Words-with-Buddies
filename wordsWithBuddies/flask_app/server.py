@@ -1,21 +1,36 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, session, stream_with_context
+from flask_session import Session
 import subprocess
 from flask_cors import CORS
-from flask import stream_with_context
 import time
+import uuid
+from uuid import uuid4
+import os
 #app instance
 app = Flask(__name__)
-CORS(app)
+app.secret_key = os.urandom(32)
 
-#recieve the board in the '000abc000' format from the website and users input
+#confif sessions
+app.config["SESSION_COOKIE_SAMESITE"] = "None"
+app.config["SESSION_COOKIE_SECURE"] = True
+app.config["SESSION_TYPE"] = 'filesystem'
+sess = Session()
+sess.init_app(app)
+CORS(app, supports_credentials=True)
 
-#create a file with the users board
 
+##### High Level Overview
+#recieve the board and letters in the '000abc000' format from the website 
+#create a file with the users board and a file for the output of words
+#both of these are unique to the user and is stored in a session variable
 #call ./words
-
 #parse output so that react can use it
+
+#Parses the data sent from user and creates the users board in a file
 def parseIn(string):
-    f = open("boards/curr_board.txt", "w")
+    curr_board_name = str(uuid.uuid4())
+    session['curr_board'] = curr_board_name
+    f = open('boards/' + curr_board_name, "w")
     spaces = string.decode().split(',')
     letters = spaces[0]
     spaces.pop(0)
@@ -32,6 +47,8 @@ def parseIn(string):
             i = 0
     f.close()
     return letters
+
+#Formats the words to be sent back to user 
 def parseOut(string):
     word = {
         "word": "",
@@ -70,6 +87,7 @@ def return_home():
         'message': "Hello world!"
     })
 
+#Sends a stream of progress updates
 @app.route("/api/updates", methods=['POST', 'GET'])
 def handle_post():
     print(request.data)
@@ -81,33 +99,49 @@ def handle_post():
         "new_letters": ""
     }
     letters = parseIn(request.data)
-    #print(letters)
-    fout = open("out.txt","w",buffering=1)
-    fin = open("out.txt", "r")
-    p1 = subprocess.Popen(['./words','devin.txt', 'abcasefasef'], stdout=fout.fileno(),text=True)
 
+    f_name = str(uuid.uuid4())
+    print(f_name)
+    session['f_name'] = f_name
+    print("session: " + session.get('f_name', None))
+    fout = open(f_name,"w",buffering=1)
+    fin = open(f_name, "r")
+
+   # p1 = subprocess.Popen(['./words',session.get('curr_board', None), letters], stdout=fout.fileno(),text=True)
+    p1 = subprocess.Popen(['./words',session['curr_board'],letters], stdout=fout.fileno(),text=True)
     def generate():
         index = 0
         while(True):
             output = fin.readline()
             if output:
                 index+=1
-                yield(output.strip() + "-")
-                if(index == 225):
+                if(index == 225): #255 is the number of squares on a board
                     print(fin.tell())
+                    fout.close()
+                    fin.close()
+                    while(p1.poll() is None): #make sure program finishes
+                        time.sleep(.1)
+                    yield(output.strip() + "-")
                     break
+                yield(output.strip() + "-")
+
     return app.response_class(stream_with_context(generate()))
 
-
+#reads the top words from the users file and returns it to user, this must be called after a call to updates completes
 @app.route("/api/words", methods=['POST', 'GET'])
 def handle_words():
-        fin = open("out.txt", "r")
+        f_name = session['f_name']
+        fin = open(f_name, "r")
         fin.seek(792) #magic number, always where updates end
-        time.sleep(.5)
         words_raw = fin.read()
         print(words_raw)
         words = parseOut(words_raw)
+        fin.close()
+        os.remove(f_name)
+        os.remove('boards/' + session.get('curr_board',None))
         return jsonify(words)
+
+        
 if __name__ == "__main__":
     app.run(debug=True, port=5006)
 

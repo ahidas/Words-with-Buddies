@@ -1,4 +1,12 @@
+/*
+To Do -
+Make it easier to type in the words
 
+Create Database to save old boards
+
+keep track of your letters
+
+*/
 import './style.css';
 import { useEffect, useState } from "react";
 import { GameBoard } from './board.js';

@@ -17,7 +17,13 @@ function BuildRow({ vals, index, setVals }){
   let type;
   function changeHandler(i,lett){
     vals[index][i] = lett; 
-    console.log(vals);  
+    console.log(vals);
+    var spaces = document.getEle("space");
+    for(var i = 0; i < 225; i++){ //need to figure out how to do this in react
+      if(spaces[i].getAttribute("key") === index * 12 + i){  //need to add some check of which direction to go
+        spaces[i].focus();
+      }
+    }
     setVals([...vals]);
   }
   for ( let i = 0; i < 15; i++){

@@ -8,7 +8,7 @@ export function Input({ setWords, vals, setPercent, percent }){
     const [letters,setLetters] = useState("");
     
     const getHello = async () => {
-      const response = await fetch("http://127.0.0.1:5000/api/home", {method: "GET"});
+      const response = await fetch("http://127.0.0.1:5000/api/home", {method: "GET", credentials: 'include'});
   
       const js = await response.json();
       console.log(js.message);
@@ -27,14 +27,14 @@ export function Input({ setWords, vals, setPercent, percent }){
   
     const data = [letters, vals];
     //getting updates
-    fetch("http://127.0.0.1:5006/api/updates").then((res) => {
+    fetch("http://127.0.0.1:5006/api/updates",{method: 'POST', credentials: 'include', body: data}).then((res) => {
       const reader = res.body.getReader();
 
       const read = () => {
         reader.read().then(async ({done, value}) => {
           if (done) {
             console.log("end");
-            const result = await fetch("http://127.0.0.1:5006/api/words",{method: 'POST', body: data});
+            const result = await fetch("http://127.0.0.1:5006/api/words",{method: 'GET', credentials: 'include'});
             const js = await result.json();
             console.log(js);
             setWords(js);
