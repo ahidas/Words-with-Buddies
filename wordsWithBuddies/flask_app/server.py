@@ -6,6 +6,16 @@ import time
 import uuid
 from uuid import uuid4
 import os
+import sqlite3
+import json
+
+
+def get_db_connection():
+    conn = sqlite3.connect('database.db')
+    #conn.row_factory = sqlite3.Row
+    return conn
+
+
 #app instance
 app = Flask(__name__)
 app.secret_key = os.urandom(32)
@@ -25,6 +35,13 @@ CORS(app, supports_credentials=True)
 #both of these are unique to the user and is stored in a session variable
 #call ./words
 #parse output so that react can use it
+
+
+
+def parse_user_info(data):
+    user_data = json.loads(data)
+    return user_data['username'], user_data['password']
+
 
 #Parses the data sent from user and creates the users board in a file
 def parseIn(string):
@@ -79,13 +96,69 @@ def parseOut(string):
 
 
 @app.route("/api/home", methods=['GET'])
-
-
-
 def return_home():
     return jsonify({
         'message': "Hello world!"
     })
+
+@app.route("/api/save_board", methods=['POST'])
+def handle_save_board():
+    data = json.loads(request.data)
+    board_name = data['name']
+    vals = data['vals']
+    print (request.data) #data should be the vals array from the react app and fnam
+    f_name = str(uuid.uuid4())
+    f = open('saved_boards/' + f_name, 'w')
+    f.write(request.data)
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("""SELECT EXISTS (SELECT 1 FROM boards WHERE id=(?) and board_name=(?)) AS row_exists""",(5,board_name))
+        res = res.fetchone()
+        if(res[0] == 0):
+            res = cursor.execute("INSERT INTO boards (id, board_name, vals) VALUES (?, ?, ?)", (5,board_name,vals))
+            conn.commit()
+            return jsonify(True)
+        else:
+            return jsonify(False)
+
+
+@app.route("/api/users", methods=['GET'])
+def handle_users():
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users")
+        results = cursor.fetchall()
+
+    print(results)
+    return results
+
+@app.route("/api/sign_up", methods=['POST','GET'])
+def handle_sign_up():
+    print(request.data)
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        user,password = parse_user_info(request.data)
+        res = cursor.execute("""SELECT EXISTS (SELECT 1 FROM users WHERE user=(?)) AS row_exists""",(user,))
+        res = res.fetchone()
+        if(res[0] == 0):
+            res = cursor.execute("INSERT INTO users (user, pass) VALUES (?, ?)", (user,password))
+            conn.commit()
+            return jsonify(True)
+        else:
+            return jsonify(False)
+
+@app.route("/api/login", methods=['POST'])
+def handle_login():
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        user,password = parse_user_info(request.data)
+        res = cursor.execute("""SELECT id FROM users WHERE user= (?) and pass=(?)""",(user,password))
+        row = res.fetchone()
+        if(row is None):
+            return jsonify(False)
+        id = row[0]
+        session['curr_id'] = id
+        return jsonify(True)
 
 #Sends a stream of progress updates
 @app.route("/api/updates", methods=['POST', 'GET'])
