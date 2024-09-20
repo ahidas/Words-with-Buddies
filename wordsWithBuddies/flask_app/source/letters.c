@@ -12,7 +12,7 @@ letter_t* new_letter(char c, int pos){
     return new;
 }
 
-letter_set_t* new_letter_set(){
+letter_set_t* new_letter_set(void){
     letter_set_t* new = malloc(sizeof(letter_set_t));
     new->head = NULL;
     new->num = 0;
