@@ -13,14 +13,14 @@ export function Input({ setWords, vals, setPercent, percent }){
   
     const data = [letters, vals];
     //getting updates
-    fetch("http://127.0.0.1:5006/api/updates",{method: 'POST', credentials: 'include', body: data}).then((res) => {
+    fetch("http://13.57.197.254:8000/api/updates",{method: 'POST', credentials: 'include', body: data}).then((res) => {
       const reader = res.body.getReader();
 
       const read = () => {
         reader.read().then(async ({done, value}) => {
           if (done) {
             console.log("end");
-            const result = await fetch("http://127.0.0.1:5006/api/words",{method: 'GET', credentials: 'include'});
+            const result = await fetch("http://13.57.197.254:8000/api/words",{method: 'GET', credentials: 'include'});
             const js = await result.json();
             console.log(js);
             setWords(js);

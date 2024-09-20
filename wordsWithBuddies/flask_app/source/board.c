@@ -40,7 +40,7 @@ int get_power(int y,int x){
     return NONE;
 }
 
-board_t* new_board(){
+board_t* new_board(void){
     board_t* new = malloc(sizeof(board_t));
     if(new == NULL){
         err(errno,"Failed to malloc board_t\n");

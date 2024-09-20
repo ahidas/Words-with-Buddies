@@ -15,7 +15,7 @@ export function UserForm( {loggedIn, setLoggedIn, vals, curr_board} ){
       }
      
       let data = {"name" : board_name, "vals" : vals};
-      const result = await fetch("http://127.0.0.1:5006/api/save_board",{method: 'POST', credentials: 'include', body: JSON.stringify(data)});
+      const result = await fetch("http://13.57.197.254:8000/api/save_board",{method: 'POST', credentials: 'include', body: JSON.stringify(data)});
       const js = await result.json();
       console.log(js);
       if(js === true){
@@ -42,7 +42,7 @@ function SignUp( { setShowSignUp, setLoggedIn, curr_board }){
         e.preventDefault();
         const data = JSON.stringify({"username": Username.current, "password": Password.current});
           //getting updates
-        const result = await fetch("http://127.0.0.1:5006/api/sign_up",{method: 'POST', credentials: 'include', body: data});
+        const result = await fetch("http://13.57.197.254:8000/api/sign_up",{method: 'POST', credentials: 'include', body: data});
         const js = await result.json();
         console.log(js);
         if(js === true){
@@ -83,7 +83,7 @@ function Login( { setShowLogin, setLoggedIn }){
         e.preventDefault();
         const data = JSON.stringify({"username": Username.current, "password" : Password.current});
           //getting updates
-        const result = await fetch("http://127.0.0.1:5006/api/login",{method: 'POST', credentials: 'include', body: data});
+        const result = await fetch("http://13.57.197.254:8000/api/login",{method: 'POST', credentials: 'include', body: data});
         const js = await result.json();
         console.log(js);
         if(js === true){

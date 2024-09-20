@@ -16,7 +16,7 @@ typedef struct letter_set{
 
 letter_t* new_letter(char,int);
 
-letter_set_t* new_letter_set();
+letter_set_t* new_letter_set(void);
 
 letter_set_t* add_letter(letter_set_t*,char,int);
 

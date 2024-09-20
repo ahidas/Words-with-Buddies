@@ -20,7 +20,7 @@ typedef struct pot_word_ll{
 
 pot_word* new_potword(int,int,int,int,char*,int);
 
-pot_word_ll* new_pot_word_ll();
+pot_word_ll* new_pot_word_ll(void);
 
 void delete_pot_word(pot_word*);
 

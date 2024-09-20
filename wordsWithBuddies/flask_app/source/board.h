@@ -30,7 +30,7 @@ space_t* new_space(int);
 
 int get_power(int,int);
 
-board_t* new_board();
+board_t* new_board(void);
 
 
 
