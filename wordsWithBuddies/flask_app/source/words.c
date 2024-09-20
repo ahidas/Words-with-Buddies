@@ -46,6 +46,9 @@ int main( int argc, char *argv[] )  {
    int tot = 0;
     if(board->num_letters == 0){
       set->head->pos = 0;
+      for(int i = 0; i < 225; i++){
+         printf("%d\n",i);
+      }
       tot = starting_word(board,set,array,index_array,words);
       //printf("Blank Board!\n");
     } else{

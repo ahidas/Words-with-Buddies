@@ -76,7 +76,7 @@ def parseOut(string):
     }
     data = {}
     words = []
-
+    print("string",string)
     newline_sep = string.split('\n')
     data["total"] = int(newline_sep[0].split()[1])
     newline_sep = newline_sep[1:]
@@ -107,19 +107,39 @@ def handle_save_board():
     board_name = data['name']
     vals = data['vals']
     print (request.data) #data should be the vals array from the react app and fnam
-    f_name = str(uuid.uuid4())
-    f = open('saved_boards/' + f_name, 'w')
-    f.write(request.data)
+    print(board_name)
     with get_db_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute("""SELECT EXISTS (SELECT 1 FROM boards WHERE id=(?) and board_name=(?)) AS row_exists""",(5,board_name))
-        res = res.fetchone()
-        if(res[0] == 0):
-            res = cursor.execute("INSERT INTO boards (id, board_name, vals) VALUES (?, ?, ?)", (5,board_name,vals))
-            conn.commit()
-            return jsonify(True)
-        else:
-            return jsonify(False)
+        cursor.execute("""DELETE FROM boards WHERE id=(?) and board_name=(?)""",(session['curr_id'],board_name))
+        res = cursor.execute("INSERT INTO boards (id, board_name, vals) VALUES (?, ?, ?)", (session['curr_id'],board_name,json.dumps(vals)))
+        conn.commit()
+        return jsonify(True)
+
+
+@app.route("/api/get_board_names", methods=['GET'])
+def handle_get_board_names():
+    id = session['curr_id']
+    print(id)
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(""" SELECT board_name FROM boards where id=(?)""",(id,))
+        res = cursor.fetchall()   
+    return jsonify(res)
+
+
+@app.route("/api/get_board", methods=['POST'])
+def handle_get_board():
+    id = session['curr_id']
+    board_name = request.data.decode('utf-8')
+    print(board_name)
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(""" SELECT vals FROM boards where id=(?) and board_name=(?)""",(id,board_name))
+        #cursor.execute(""" SELECT vals FROM boards where id=(?)""",(id,))
+        res = cursor.fetchone()   
+    print(res)
+    print(json.loads(res[0]))
+    return jsonify(json.loads(res[0]))
 
 
 @app.route("/api/users", methods=['GET'])
@@ -128,9 +148,16 @@ def handle_users():
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users")
         results = cursor.fetchall()
-
-    print(results)
     return results
+
+@app.route("/api/boards", methods=['GET'])
+def handle_boards():
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM boards")
+        results = cursor.fetchall()
+    return results
+
 
 @app.route("/api/sign_up", methods=['POST','GET'])
 def handle_sign_up():
@@ -143,6 +170,9 @@ def handle_sign_up():
         if(res[0] == 0):
             res = cursor.execute("INSERT INTO users (user, pass) VALUES (?, ?)", (user,password))
             conn.commit()
+            res = cursor.execute("""SELECT id FROM users WHERE user= (?) and pass=(?)""",(user,password))
+            row = res.fetchone()
+            session['curr_id'] = row[0]
             return jsonify(True)
         else:
             return jsonify(False)
@@ -188,7 +218,7 @@ def handle_post():
             output = fin.readline()
             if output:
                 index+=1
-                if(index == 225): #255 is the number of squares on a board
+                if(index == 225): #225 is the number of squares on a board
                     print(fin.tell())
                     fout.close()
                     fin.close()

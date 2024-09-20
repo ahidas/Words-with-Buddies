@@ -4,22 +4,8 @@ import { useEffect, useState } from "react";
 
 
 export function Input({ setWords, vals, setPercent, percent }){
-    const [hello,setHello] = useState(null);
     const [letters,setLetters] = useState("");
     
-    const getHello = async () => {
-      const response = await fetch("http://127.0.0.1:5000/api/home", {method: "GET", credentials: 'include'});
-  
-      const js = await response.json();
-      console.log(js.message);
-      return js.message;
-    }
-  
-  
-  const clickHandler = async () => {
-    const message = await getHello();
-    setHello(message);
-  };
 
     async function handleSubmit(e){
       //disable page from reloading
@@ -58,7 +44,6 @@ export function Input({ setWords, vals, setPercent, percent }){
 
     return (<> 
         <form onSubmit={handleSubmit}> 
-        <div> {hello} </div>
           <input className='lettersInput' onChange={(e) => {
       const value = e.target.value;
       const regMatch = /^[a-zA-Z]*$/.test(value);

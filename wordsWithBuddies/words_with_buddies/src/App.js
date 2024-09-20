@@ -8,9 +8,11 @@ keep track of your letters
 
 */
 import './style.css';
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef } from "react";
 import { GameBoard } from './board.js';
 import { Input } from './input.js';
+import { UserForm } from './Users.js';
+import { UserBoards } from './userBoards.js';
 
 const emptyBoard = [
   ["","","","","","","","","","","","","","",""],
@@ -35,14 +37,18 @@ function App() {
   const [words, setWords] = useState(null);
   const [vals, setVals] = useState(emptyBoard);
   const [percent, setPercent] = useState(0.0);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const curr_board = useRef("");
 
   return (
    <div className='site'> 
 
-    <Header/> 
+    <Header vals = { vals } loggedIn = {loggedIn} setLoggedIn = { setLoggedIn } setVals ={setVals} emptyBoard={emptyBoard} curr_board={curr_board} /> 
+
     <div className='body'>
       <div className='boardAndInput'>
-      <text> Enter your current GameBoard in the grid - then your letters - then click analyze!</text>
+    <text> Enter your current GameBoard in the grid - then your letters - then click analyze!</text> <br/>
+    <text> (Press enter to switch direction of typing) </text>
     <GameBoard vals={vals} setVals={setVals}/>
     <Input setWords ={setWords} vals={vals} setPercent = {setPercent} percent = {percent}/> 
     </div>
@@ -53,8 +59,12 @@ function App() {
   );
 }
 
-function Header(){
+function Header({loggedIn, setLoggedIn, vals, setVals, emptyBoard, curr_board}){
   return( <>
+  <div className='user_form_boards'> 
+      <UserForm vals = { vals } loggedIn = { loggedIn } setLoggedIn = { setLoggedIn } curr_board={curr_board}/>
+      {loggedIn ? <UserBoards setVals = { setVals } emptyBoard={emptyBoard} curr_board={curr_board}/> : null}
+      </div>
       <header className="head"> 
         <h1> Words with Buddies!</h1>
       </header>
@@ -101,7 +111,7 @@ function BestWords({ words, setVals, vals, percent }){
     <div>
       {percent ? <Loading percent={percent}/> : null} 
          {words ? `Total: ${words.total}` : null} <br/>
-         {words ? `Longest Word: ${words.words[0].word} for ${words.words[0].points} at position (${words.words[0].position[0]},${words.words[0].position[1]}) in the ${words.words[0].direction} direction using ${words.words[0].new_letters} new letters` : null}
+         {words ? `Longest Word: ${words.words[0].word} for ${words.words[0].points} at position (${words.words[0].position[0]},${words.words[0].position[1]}) in the ${words.words[0].direction ? "horizontal" : "vertical"} direction using ${words.words[0].new_letters} new letters` : null}
         <br/>
         <div className='pot_words'>
         {words ? words.words.slice(1).map((w) => (<TopWord word={w} setVals={setVals} vals={vals}/>)) : null}
