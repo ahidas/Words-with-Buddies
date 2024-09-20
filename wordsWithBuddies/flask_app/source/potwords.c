@@ -14,7 +14,7 @@ pot_word* new_potword(int points,int x, int y, int dir, char* word,int num_new){
     return new;
 }
 
-pot_word_ll* new_pot_word_ll(){
+pot_word_ll* new_pot_word_ll(void){
     pot_word_ll* new = malloc(sizeof(pot_word_ll));
     new->head = NULL;
     return new;
