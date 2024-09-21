@@ -102,7 +102,7 @@ function BuildRow({ vals, index, setVals,inputRefs,setCurrCor, direction }){
     const newCol = <input onKeyDown={(e) => {if(e.key === 'Enter'){ direction.current = !direction.current; }}} onChange={(e) => changeHandler(i,e.target.value)} className={type} key={boxKey}  ref={(el) => (inputRefs.current[index][i] = el)} value={vals[index][i]} x = {i} y={index}  />
     boxKey++;
     rows.push(newCol);
-    console.log(inputRefs.current[index][i]);
+    //console.log(inputRefs.current[index][i]);
   }
 
   return (<div className='row'> 
