@@ -31,3 +31,5 @@ pot_word* add_pot_word(pot_word*,pot_word_ll*);
 void print_potwords(pot_word_ll*,int);
 
 pot_word* longest_potword(pot_word_ll*);
+
+void trim_potwords(pot_word_ll);

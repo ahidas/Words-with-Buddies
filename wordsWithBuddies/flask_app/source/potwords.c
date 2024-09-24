@@ -53,6 +53,9 @@ pot_word* add_pot_word(pot_word* pot,pot_word_ll* ll){
             curr->next = pot;
             return pot;
         }
+        if(strcmp(pot->word, curr->next->word) == 0 && pot->points == curr->next->points && pot->x == curr->next->x && pot->y == curr->next->y && pot->dir == curr->next->dir){
+            return NULL;
+        }
         curr = curr->next;
     }
     curr->next = pot;

@@ -51,6 +51,9 @@ function SignUp( { setShowSignUp, setLoggedIn, curr_board }){
             setShowSignUp(false);
             curr_board.current = "";
         }
+        else{
+          alert("Failed to sign up, Username already taken");
+        }
     }
     return (<div>
         <header> Sign Up </header>
@@ -90,6 +93,9 @@ function Login( { setShowLogin, setLoggedIn }){
             alert("Successfully logged in");
             setLoggedIn(true);
             setShowLogin(false);
+        }
+        else {
+          alert("Failed to login, incorrect username or password");
         }
     }
     return (<div>
