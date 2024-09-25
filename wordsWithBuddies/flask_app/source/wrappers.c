@@ -65,7 +65,7 @@ int traverse_board(board_t* board, char** array, letter_set_t* set, pot_word_ll*
             if((x + 1 != 15 && board->spaces[y][x+1]->filled) || ( x - 1 != -1 && board->spaces[y][x - 1]->filled)){
                 curr = set->head;
                 while(curr != NULL){
-                    curr->pos = 0;
+                    curr->pos = -1;
                     tot += words_at_spot_vertical(y,x,board,set,words,array,file,num_words,letter_indexes);
                     curr->pos = 20;
                     curr = curr->next;
@@ -74,7 +74,7 @@ int traverse_board(board_t* board, char** array, letter_set_t* set, pot_word_ll*
             if((y + 1 != 15 && board->spaces[y+1][x]->filled) || ( y - 1 != -1 && board->spaces[y-1][x]->filled)){
                 curr = set->head;
                 while(curr != NULL){
-                    curr->pos = 0;
+                    curr->pos = -1;
                     tot += words_at_spot_horizontal(y,x,board,set,words,array,file,num_words,letter_indexes);
                     curr->pos = 20;
                     curr = curr->next;

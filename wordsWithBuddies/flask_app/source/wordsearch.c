@@ -310,7 +310,7 @@ int starting_word(board_t* board,letter_set_t* set, char** array,int* letter_ind
     ///print_potwords(words_horizontal,120);
     pot_word* curr = words_horizontal->head;
     while(curr != NULL){
-            temp_pot = new_potword(10,7-curr->x,7,0,curr->word,curr->num_new);
+            temp_pot = new_potword(10,7-curr->x,7,0,curr->word,curr->num_new + 1);
             temp_pot->points = get_points_horizontal(temp_pot,board);
             add_pot_word(temp_pot,words);
             total_words++;
