@@ -71,15 +71,9 @@ int set_compare(letter_set_t* word,letter_set_t* letters, int num_wilds, int* nu
     letter_t* curr = letters->head;
     letter_t* other_curr;
     int new_word_f = 0;
-    int floating_letter_check = 0; //if all the letters are the users and none from the board this will become one
     char starting = '0'; // this is the letter that has position zero in the available letters set
     while(curr != NULL && starting == '0'){
         if(curr->pos == 0){
-            starting = curr->letter;
-        }
-        if(curr->pos == -1){
-            floating_letter_check = 1;
-            curr->pos = 0;
             starting = curr->letter;
         }
         curr = curr->next;
@@ -153,7 +147,7 @@ int set_compare(letter_set_t* word,letter_set_t* letters, int num_wilds, int* nu
                 set_used(letters);
         if(curr == NULL && new_word_f){
            /// printf("num_wilds: %d wilds: %d\n",num_wilds,wilds);
-            *num_new = new_word_f + (num_wilds - wilds) + floating_letter_check;
+            *num_new = new_word_f + (num_wilds - wilds);
             return pos_array[a_index];
         }
         new_word_f = 0;
