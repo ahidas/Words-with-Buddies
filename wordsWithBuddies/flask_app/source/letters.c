@@ -79,7 +79,6 @@ int set_compare(letter_set_t* word,letter_set_t* letters, int num_wilds, int* nu
         }
         if(curr->pos == -1){
             floating_letter_check = 1;
-            new_word_f = 1;
             curr->pos = 0;
             starting = curr->letter;
         }
@@ -154,10 +153,10 @@ int set_compare(letter_set_t* word,letter_set_t* letters, int num_wilds, int* nu
                 set_used(letters);
         if(curr == NULL && new_word_f){
            /// printf("num_wilds: %d wilds: %d\n",num_wilds,wilds);
-            *num_new = new_word_f + (num_wilds - wilds);
+            *num_new = new_word_f + (num_wilds - wilds) + floating_letter_check;
             return pos_array[a_index];
         }
-        new_word_f = floating_letter_check;
+        new_word_f = 0;
         a_index++;
     }
 
